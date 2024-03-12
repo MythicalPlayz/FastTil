@@ -115,65 +115,72 @@ async function getCurrentPrayers(prayers){
         "min": Number(prayers.Isha.substring(0,5).split(":")[1])
     }
 
-    let current, next, ratio;
-    if (time.hour < Fajr.hour || (time.hour === Fajr.hour && time.minute < Fajr.min)){
+    let current, next, ratio, remaining;
+    if (time.hour < Fajr.hour || (time.hour === Fajr.hour && time.min < Fajr.min)){
         //Before Fajr
         let timeD = (Fajr.hour - Isha.hour + 24) * 60 + (Fajr.min - Isha.min)
-        let timeN = (Fajr.hour - time.hour + 24) * 60 + (Fajr.min - time.min)
+        let timeN = (time.hour - Isha.hour) * 60 + (time.min - Isha.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Isha"
         next = "Fajr"
     }
-    else if (time.hour < Sunrise.hour || (time.hour === Sunrise.hour && time.minute < Sunrise.min)){
+    else if (time.hour < Sunrise.hour || (time.hour === Sunrise.hour && time.min < Sunrise.min)){
         //Before Sunrise
         let timeD = (Sunrise.hour - Fajr.hour) * 60 + (Sunrise.min - Fajr.min)
-        let timeN = (Sunrise.hour - time.hour) * 60 + (Sunrise.min - time.min)
+        let timeN = (time.hour - Fajr.hour) * 60 + (time.min - Fajr.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Fajr"
         next = "Sunrise"
     }
-    else if (time.hour < Dhuhr.hour || (time.hour === Dhuhr.hour && time.minute < Dhuhr.min)){
+    else if (time.hour < Dhuhr.hour || (time.hour === Dhuhr.hour && time.min < Dhuhr.min)){
         //Before Dhuhr
         let timeD = (Dhuhr.hour - Sunrise.hour) * 60 + (Dhuhr.min - Sunrise.min)
-        let timeN = (Dhuhr.hour - time.hour) * 60 + (Dhuhr.min - time.min)
+        let timeN = (time.hour - Sunrise.hour) * 60 + (time.min - Sunrise.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Sunrise"
         next = "Dhuhr"
     }
-    else if (time.hour < Asr.hour || (time.hour === Asr.hour && time.minute < Asr.min)){
+    else if (time.hour < Asr.hour || (time.hour === Asr.hour && time.min < Asr.min)){
         //Before Asr
         let timeD = (Asr.hour - Dhuhr.hour) * 60 + (Asr.min - Dhuhr.min)
-        let timeN = (Asr.hour - time.hour) * 60 + (Asr.min - time.min)
+        let timeN = (time.hour - Dhuhr.hour) * 60 + (time.min - Dhuhr.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Dhuhr"
         next = "Asr"
     }
-    else if (time.hour < Maghrib.hour || (time.hour === Maghrib.hour && time.minute < Maghrib.min)){
+    else if (time.hour < Maghrib.hour || (time.hour === Maghrib.hour && time.min < Maghrib.min)){
         //Before Maghrib
         let timeD = (Maghrib.hour - Asr.hour) * 60 + (Maghrib.min - Asr.min)
-        let timeN = (Maghrib.hour - time.hour) * 60 + (Maghrib.min - time.min)
+        let timeN = (time.hour - Asr.hour) * 60 + (time.min - Asr.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Asr"
         next = "Maghrib"
     }
-    else if (time.hour < Isha.hour || (time.hour === Isha.hour && time.minute < Isha.min)){
+    else if (time.hour < Isha.hour || (time.hour === Isha.hour && time.min < Isha.min)){
         //Before Isha
         let timeD = (Isha.hour - Maghrib.hour) * 60 + (Isha.min - Maghrib.min)
-        let timeN = (Isha.hour - time.hour) * 60 + (Isha.min - time.min)
+        let timeN = (time.hour - Maghrib.hour) * 60 + (time.min - Maghrib.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Maghrib"
         next = "Isha"
     }
     else {
         //Isha-Fajr
         let timeD = (Fajr.hour - Isha.hour + 24) * 60 + (Fajr.min - Isha.min)
-        let timeN = (Fajr.hour - time.hour + 24) * 60 + (Fajr.min - time.min)
+        let timeN = (time.hour - Isha.hour) * 60 + (time.min - Isha.min)
         ratio = timeN / timeD
+        remaining = timeD - timeN
         current = "Isha"
         next = "Fajr"
     }
 
-    return [current,next,ratio]
+    return [current,next,remaining,ratio]
 }
 
 async function updateVisuals(prayerDayData){
@@ -193,8 +200,8 @@ async function updateVisuals(prayerDayData){
 
     let currentPrayers = await getCurrentPrayers(prayerDayData.timings)
     current.getElementsByTagName('p')[0].innerText = "Current: " + currentPrayers[0]
-    current.getElementsByTagName('p')[1].innerText = "Next: " + currentPrayers[1]
-    current.getElementsByTagName('progress')[0].value = currentPrayers[2]
+    current.getElementsByTagName('p')[1].innerText = "Next: " + currentPrayers[1] + " in "  + Math.floor(currentPrayers[2] / 60) + " hours and " + currentPrayers[2] % 60  + " minutes"  
+    current.getElementsByTagName('progress')[0].value = currentPrayers[3]
 }
 setData()
 setInterval(setData, 60000);
