@@ -81,11 +81,10 @@ let cachedMonth = getFromCache("month")
     }
     let prayerDayData = prayerData[date.getDate() - 1]
     updateVisuals(prayerDayData)
-    console.log(prayerDayData)
 }
 
 async function getCurrentPrayers(prayers){
-    time = {
+    let time = {
         "hour": Number(new Date().getHours()),
         "min": Number(new Date().getMinutes())
     }
@@ -116,7 +115,7 @@ async function getCurrentPrayers(prayers){
     }
 
     let current, next, ratio, remaining;
-    if (time.hour < Fajr.hour || (time.hour === Fajr.hour && time.min < Fajr.min)){
+    if (time.hour <= Fajr.hour || (time.hour === Fajr.hour && time.min <= Fajr.min)){
         //Before Fajr
         let timeD = (Fajr.hour - Isha.hour + 24) * 60 + (Fajr.min - Isha.min)
         let timeN = (time.hour - Isha.hour) * 60 + (time.min - Isha.min)
@@ -125,7 +124,7 @@ async function getCurrentPrayers(prayers){
         current = "Isha"
         next = "Fajr"
     }
-    else if (time.hour < Sunrise.hour || (time.hour === Sunrise.hour && time.min < Sunrise.min)){
+    else if (time.hour <= Sunrise.hour || (time.hour === Sunrise.hour && time.min <= Sunrise.min)){
         //Before Sunrise
         let timeD = (Sunrise.hour - Fajr.hour) * 60 + (Sunrise.min - Fajr.min)
         let timeN = (time.hour - Fajr.hour) * 60 + (time.min - Fajr.min)
@@ -134,7 +133,7 @@ async function getCurrentPrayers(prayers){
         current = "Fajr"
         next = "Sunrise"
     }
-    else if (time.hour < Dhuhr.hour || (time.hour === Dhuhr.hour && time.min < Dhuhr.min)){
+    else if (time.hour <= Dhuhr.hour || (time.hour === Dhuhr.hour && time.min <= Dhuhr.min)){
         //Before Dhuhr
         let timeD = (Dhuhr.hour - Sunrise.hour) * 60 + (Dhuhr.min - Sunrise.min)
         let timeN = (time.hour - Sunrise.hour) * 60 + (time.min - Sunrise.min)
@@ -143,7 +142,7 @@ async function getCurrentPrayers(prayers){
         current = "Sunrise"
         next = "Dhuhr"
     }
-    else if (time.hour < Asr.hour || (time.hour === Asr.hour && time.min < Asr.min)){
+    else if (time.hour <= Asr.hour || (time.hour === Asr.hour && time.min <= Asr.min)){
         //Before Asr
         let timeD = (Asr.hour - Dhuhr.hour) * 60 + (Asr.min - Dhuhr.min)
         let timeN = (time.hour - Dhuhr.hour) * 60 + (time.min - Dhuhr.min)
@@ -152,7 +151,7 @@ async function getCurrentPrayers(prayers){
         current = "Dhuhr"
         next = "Asr"
     }
-    else if (time.hour < Maghrib.hour || (time.hour === Maghrib.hour && time.min < Maghrib.min)){
+    else if (time.hour <= Maghrib.hour || (time.hour === Maghrib.hour && time.min <= Maghrib.min)){
         //Before Maghrib
         let timeD = (Maghrib.hour - Asr.hour) * 60 + (Maghrib.min - Asr.min)
         let timeN = (time.hour - Asr.hour) * 60 + (time.min - Asr.min)
@@ -161,7 +160,7 @@ async function getCurrentPrayers(prayers){
         current = "Asr"
         next = "Maghrib"
     }
-    else if (time.hour < Isha.hour || (time.hour === Isha.hour && time.min < Isha.min)){
+    else if (time.hour <= Isha.hour || (time.hour === Isha.hour && time.min <= Isha.min)){
         //Before Isha
         let timeD = (Isha.hour - Maghrib.hour) * 60 + (Isha.min - Maghrib.min)
         let timeN = (time.hour - Maghrib.hour) * 60 + (time.min - Maghrib.min)
